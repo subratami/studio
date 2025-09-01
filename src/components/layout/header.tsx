@@ -13,9 +13,14 @@ export function Header() {
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-          <Link href="/create">
+           <Link href="/login">
+            <Button variant="ghost">
+              Login
+            </Button>
+          </Link>
+          <Link href="/signup">
             <Button>
-              Get Started <ArrowRight className="ml-2 h-4 w-4" />
+              Sign Up <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
         </div>
