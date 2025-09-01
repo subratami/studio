@@ -39,10 +39,7 @@ const generateThumbnailFlow = ai.defineFlow(
   async input => {
     const { media } = await ai.generate({
         model: googleAI.model('gemini-1.5-flash-latest'),
-        prompt: input.prompt,
-        config: {
-            aspectRatio: '16:9'
-        }
+        prompt: input.prompt
     });
     
     const imageDataUri = media.url;
