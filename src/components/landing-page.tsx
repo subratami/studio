@@ -6,29 +6,50 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, ImageIcon, Sparkles, Wand2 } from 'lucide-react';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 export function LandingPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isClient, setIsClient] = useState(false);
+  const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setIsClient(true);
     const handleMouseMove = (event: MouseEvent) => {
-      setMousePosition({ x: event.clientX, y: event.clientY });
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        // Set position relative to the hero section's center
+        setMousePosition({ 
+          x: event.clientX - (rect.left + rect.width / 2),
+          y: event.clientY - (rect.top + rect.height / 2)
+        });
+      }
     };
+    
+    const handleMouseLeave = () => {
+      // Reset position when mouse leaves the hero section
+      setMousePosition({ x: 0, y: 0 });
+    }
 
-    window.addEventListener('mousemove', handleMouseMove);
+    const heroElement = heroRef.current;
+    if (heroElement) {
+        heroElement.addEventListener('mousemove', handleMouseMove);
+        heroElement.addEventListener('mouseleave', handleMouseLeave);
+    }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
+      if (heroElement) {
+        heroElement.removeEventListener('mousemove', handleMouseMove);
+        heroElement.removeEventListener('mouseleave', handleMouseLeave);
+      }
     };
   }, []);
   
   const calculateTransform = (factor: number) => {
     if (!isClient) return {};
-    const x = (mousePosition.x - window.innerWidth / 2) * factor;
-    const y = (mousePosition.y - window.innerHeight / 2) * factor;
+    // Movement is now based on the mouse position relative to the hero section center
+    const x = mousePosition.x * factor;
+    const y = mousePosition.y * factor;
     return {
       transform: `translate(${x}px, ${y}px)`,
     };
@@ -38,7 +59,7 @@ export function LandingPage() {
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative py-20 sm:py-32 overflow-hidden">
+      <section ref={heroRef} className="relative py-20 sm:py-32 overflow-hidden">
          {/* Floating Background Images */}
         <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10">
             <div style={calculateTransform(0.02)} className="transition-transform duration-500 ease-out">
