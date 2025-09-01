@@ -19,8 +19,8 @@ interface ThumbnailProps {
 
 function Thumbnail({ seed, alt, hint, text, className, style }: ThumbnailProps) {
   return (
-    <div style={style} className="transition-transform duration-500 ease-out">
-      <div className={`relative ${className}`}>
+    <div style={style} className={`absolute transition-transform duration-500 ease-out ${className}`}>
+      <div className="relative">
         <Image
           src={`https://picsum.photos/seed/${seed}/200/112`}
           alt={alt}
@@ -80,14 +80,14 @@ export function LandingPage() {
       <section ref={heroRef} className="relative py-20 sm:py-32 overflow-hidden bg-muted/20">
         {/* Floating Background Images */}
         <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10">
-          <Thumbnail seed={1} alt="sample 1" hint="gaming thumbnail" text="GAMING" className="absolute top-[15%] left-[10%]" style={calculateTransform(0.02)} />
-          <Thumbnail seed={2} alt="sample 2" hint="lifestyle vlog" text="VLOG" className="absolute bottom-[20%] right-[15%]" style={calculateTransform(-0.03)} />
-          <Thumbnail seed={3} alt="sample 3" hint="tech review" text="TECH" className="absolute top-[25%] right-[30%]" style={calculateTransform(0.015)} />
-          <Thumbnail seed={4} alt="sample 4" hint="cooking tutorial" text="COOKING" className="absolute bottom-[10%] left-[25%]" style={calculateTransform(-0.025)} />
-          <Thumbnail seed={5} alt="sample 5" hint="finance advice" text="FINANCE" className="absolute top-[60%] left-[5%]" style={calculateTransform(0.035)} />
-          <Thumbnail seed={6} alt="sample 6" hint="travel guide" text="TRAVEL" className="absolute top-[5%] right-[5%]" style={calculateTransform(-0.01)} />
-          <Thumbnail seed={7} alt="sample 7" hint="fitness workout" text="FITNESS" className="absolute bottom-[40%] right-[45%]" style={calculateTransform(0.022)} />
-          <Thumbnail seed={8} alt="sample 8" hint="unboxing video" text="UNBOXING" className="absolute top-[70%] right-[20%]" style={calculateTransform(-0.018)} />
+          <Thumbnail seed={1} alt="sample 1" hint="gaming thumbnail" text="GAMING" className="top-[15%] left-[10%]" style={calculateTransform(0.02)} />
+          <Thumbnail seed={2} alt="sample 2" hint="lifestyle vlog" text="VLOG" className="bottom-[20%] right-[15%]" style={calculateTransform(-0.03)} />
+          <Thumbnail seed={3} alt="sample 3" hint="tech review" text="TECH" className="top-[25%] right-[30%]" style={calculateTransform(0.015)} />
+          <Thumbnail seed={4} alt="sample 4" hint="cooking tutorial" text="COOKING" className="bottom-[10%] left-[25%]" style={calculateTransform(-0.025)} />
+          <Thumbnail seed={5} alt="sample 5" hint="finance advice" text="FINANCE" className="top-[60%] left-[5%]" style={calculateTransform(0.035)} />
+          <Thumbnail seed={6} alt="sample 6" hint="travel guide" text="TRAVEL" className="top-[5%] right-[5%]" style={calculateTransform(-0.01)} />
+          <Thumbnail seed={7} alt="sample 7" hint="fitness workout" text="FITNESS" className="bottom-[40%] right-[45%]" style={calculateTransform(0.022)} />
+          <Thumbnail seed={8} alt="sample 8" hint="unboxing video" text="UNBOXING" className="top-[70%] right-[20%]" style={calculateTransform(-0.018)} />
         </div>
 
         <div className="container relative mx-auto px-4 text-center">
