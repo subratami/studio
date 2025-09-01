@@ -68,22 +68,22 @@ export function LandingPage() {
             <div style={calculateTransform(-0.03)} className="transition-transform duration-500 ease-out">
                 <Image src="https://picsum.photos/seed/2/400/225" alt="sample 2" width={200} height={112} className="absolute top-[20%] right-[10%] rounded-xl shadow-2xl" data-ai-hint="vlog thumbnail" />
             </div>
-            <div style={calculateTransform(0.015)} className="transition-transform duration-500 ease-out hidden md:block">
+            <div style={calculateTransform(0.015)} className="transition-transform duration-500 ease-out">
                 <Image src="https://picsum.photos/seed/3/400/225" alt="sample 3" width={200} height={112} className="absolute bottom-[25%] left-[20%] rounded-xl shadow-2xl" data-ai-hint="tech review" />
             </div>
-             <div style={calculateTransform(-0.025)} className="transition-transform duration-500 ease-out hidden md:block">
+             <div style={calculateTransform(-0.025)} className="transition-transform duration-500 ease-out">
                 <Image src="https://picsum.photos/seed/4/400/225" alt="sample 4" width={200} height={112} className="absolute bottom-[10%] right-[25%] rounded-xl shadow-2xl" data-ai-hint="finance chart" />
             </div>
              <div style={calculateTransform(0.035)} className="transition-transform duration-500 ease-out">
                 <Image src="https://picsum.photos/seed/5/400/225" alt="sample 5" width={200} height={112} className="absolute top-[50%] left-[45%] rounded-xl shadow-2xl" data-ai-hint="tutorial thumbnail" />
             </div>
-            <div style={calculateTransform(-0.01)} className="transition-transform duration-500 ease-out hidden md:block">
+            <div style={calculateTransform(-0.01)} className="transition-transform duration-500 ease-out">
                 <Image src="https://picsum.photos/seed/6/400/225" alt="sample 6" width={200} height={112} className="absolute bottom-[10%] left-[2%] rounded-xl shadow-2xl" data-ai-hint="cooking show" />
             </div>
             <div style={calculateTransform(0.022)} className="transition-transform duration-500 ease-out">
                 <Image src="https://picsum.photos/seed/7/400/225" alt="sample 7" width={200} height={112} className="absolute top-[75%] right-[15%] rounded-xl shadow-2xl" data-ai-hint="fitness workout" />
             </div>
-            <div style={calculateTransform(-0.018)} className="transition-transform duration-500 ease-out hidden md:block">
+            <div style={calculateTransform(-0.018)} className="transition-transform duration-500 ease-out">
                 <Image src="https://picsum.photos/seed/8/400/225" alt="sample 8" width={200} height={112} className="absolute bottom-[5%] right-[5%] rounded-xl shadow-2xl" data-ai-hint="travel vlog" />
             </div>
         </div>
