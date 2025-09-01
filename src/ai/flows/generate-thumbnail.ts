@@ -50,7 +50,9 @@ const generateThumbnailFlow = ai.defineFlow(
       const result = await ai.generate({
         model: googleAI.model('gemini-2.0-flash-preview-image-generation'),
         prompt: [
-          {text: `You are an AI image editor. Use the provided image as the base and apply the following edits: ${input.prompt}`},
+          {text: `You are an AI image editor. Your task is to modify the provided image based on my instructions. Do not replace the image, but instead, use it as a background or a layer and add the new elements on top of it. Preserve the original image as much as possible, only making the requested additions or changes.
+
+My request is: ${input.prompt}`},
           {media: {url: input.photoDataUri!}},
         ],
         config: {
