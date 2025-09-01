@@ -4,15 +4,17 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { History, Copy, Trash2, Wand2 } from 'lucide-react';
+import { History, Copy, Trash2, Wand2, RefreshCw } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Prompt } from '@/lib/types';
 import { cva } from 'class-variance-authority';
+import Image from 'next/image';
 
 interface PromptHistoryProps {
   prompts: Prompt[];
   setOverlayText: (text: string) => void;
   clearPrompts: () => void;
+  setGeneratedImage: (image: string | null) => void;
 }
 
 const badgeVariants = cva('', {
@@ -25,7 +27,7 @@ const badgeVariants = cva('', {
   },
 });
 
-export function PromptHistory({ prompts, setOverlayText, clearPrompts }: PromptHistoryProps) {
+export function PromptHistory({ prompts, setOverlayText, clearPrompts, setGeneratedImage }: PromptHistoryProps) {
   const { toast } = useToast();
 
   const handleCopy = (text: string) => {
@@ -33,6 +35,11 @@ export function PromptHistory({ prompts, setOverlayText, clearPrompts }: PromptH
     toast({ title: 'Copied to clipboard!' });
   };
   
+  const handleUseImage = (imageDataUri: string) => {
+    setGeneratedImage(imageDataUri);
+    toast({ title: 'Image loaded into preview.' });
+  };
+
   const formatTimeAgo = (date: Date) => {
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
     let interval = seconds / 31536000;
@@ -74,6 +81,11 @@ export function PromptHistory({ prompts, setOverlayText, clearPrompts }: PromptH
                     </div>
                     <span className="text-xs text-muted-foreground whitespace-nowrap pl-2">{formatTimeAgo(prompt.timestamp)}</span>
                   </div>
+                  {prompt.imageDataUri && (
+                    <div className="mt-3 relative w-full aspect-video rounded-md overflow-hidden">
+                       <Image src={prompt.imageDataUri} alt="Generated thumbnail from history" layout="fill" objectFit="cover" />
+                    </div>
+                  )}
                   <div className="flex gap-2 mt-3">
                      <Button size="sm" variant="outline" onClick={() => handleCopy(prompt.result)}>
                         <Copy className="mr-2 h-3 w-3" /> Copy Result
@@ -82,6 +94,11 @@ export function PromptHistory({ prompts, setOverlayText, clearPrompts }: PromptH
                         <Button size="sm" variant="outline" onClick={() => setOverlayText(prompt.result.substring(0, 50))}>
                            <Wand2 className="mr-2 h-3 w-3" /> Use Text
                         </Button>
+                      )}
+                      {prompt.imageDataUri && (
+                         <Button size="sm" variant="outline" onClick={() => handleUseImage(prompt.imageDataUri!)}>
+                           <RefreshCw className="mr-2 h-3 w-3" /> Use Image
+                         </Button>
                       )}
                   </div>
                 </div>

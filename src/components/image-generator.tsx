@@ -69,10 +69,8 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
       });
       
       if (generationMode === 'text-to-image') {
-        // For text-to-image, we replace the uploaded image.
         setUploadedImage(result.imageDataUri);
       } else {
-        // For image-to-image, we set the generated image separately.
         setGeneratedImage(result.imageDataUri);
       }
 
@@ -80,6 +78,7 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
         type: 'generation',
         original: values.prompt,
         result: enhancedPrompt,
+        imageDataUri: result.imageDataUri,
       });
       form.reset();
       toast({ title: 'Thumbnail generated successfully!' });

@@ -4,4 +4,5 @@ export interface Prompt {
   original: string;
   result: string;
   timestamp: Date;
+  imageDataUri?: string;
 }
