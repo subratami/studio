@@ -6,6 +6,8 @@ import { ControlPanel } from './control-panel';
 import { PreviewPanel } from './preview-panel';
 import type { Prompt } from '@/lib/types';
 
+const MAX_IMAGE_HISTORY = 5;
+
 export function ThumbnailEditor() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -50,8 +52,14 @@ export function ThumbnailEditor() {
       const updatedPrompts = [newPrompt, ...currentPrompts].slice(0, 50);
 
       try {
-        // Create a version of the prompts without the large image data for session storage
-        const storablePrompts = updatedPrompts.map(({ imageDataUri, ...rest }) => rest);
+        // Create a version of the prompts that only stores the most recent images
+        const storablePrompts = updatedPrompts.map((p, index) => {
+          if (p.type === 'generation' && index >= MAX_IMAGE_HISTORY) {
+            const { imageDataUri, ...rest } = p;
+            return rest;
+          }
+          return p;
+        });
         sessionStorage.setItem('thumbgenius_prompts', JSON.stringify(storablePrompts));
       } catch (error) {
         console.error('Failed to save prompts to session storage:', error);

@@ -15,7 +15,7 @@ interface PromptHistoryProps {
   prompts: Prompt[];
   setOverlayText: (text: string) => void;
   clearPrompts: () => void;
-  setUploadedImage: (image: string | null) => void; // Changed from setGeneratedImage
+  setUploadedImage: (image: string | null) => void;
   setGeneratedImage: (image: string | null) => void;
 }
 
@@ -65,7 +65,7 @@ export function PromptHistory({ prompts, setOverlayText, clearPrompts, setUpload
           <History className="mr-2 text-primary" /> Session History
         </CardTitle>
         <CardDescription>
-          Your recent AI interactions. This list will be cleared when you close the tab.
+          Your recent AI interactions. Images are stored for the last 5 generations.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -86,7 +86,7 @@ export function PromptHistory({ prompts, setOverlayText, clearPrompts, setUpload
                   </div>
                   {prompt.imageDataUri && (
                     <div className="mt-3 relative w-full aspect-video rounded-md overflow-hidden">
-                       <Image src={prompt.imageDataUri} alt="Generated thumbnail from history" fill objectFit="cover" />
+                       <Image src={prompt.imageDataUri} alt="Generated thumbnail from history" layout="fill" objectFit="cover" />
                     </div>
                   )}
                   <div className="flex gap-2 mt-3">
