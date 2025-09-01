@@ -47,7 +47,7 @@ const generateThumbnailFlow = ai.defineFlow(
     if (input.photoDataUri) {
       // Image-to-image generation
       const result = await ai.generate({
-        model: googleAI.model('gemini-1.5-flash-latest'),
+        model: googleAI.model('gemini-1.5-pro-latest'),
         prompt: [
           {text: input.prompt},
           {media: {url: input.photoDataUri}},
