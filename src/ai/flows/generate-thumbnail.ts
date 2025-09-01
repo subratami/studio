@@ -52,6 +52,9 @@ const generateThumbnailFlow = ai.defineFlow(
           {text: input.prompt},
           {media: {url: input.photoDataUri}},
         ],
+        config: {
+          responseModalities: ['IMAGE'],
+        }
       });
       media = result.media;
     } else {
