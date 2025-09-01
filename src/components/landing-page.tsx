@@ -9,85 +9,10 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 
 export function LandingPage() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isClient, setIsClient] = useState(false);
-  const heroRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    setIsClient(true);
-    const handleMouseMove = (event: MouseEvent) => {
-      if (heroRef.current) {
-        const rect = heroRef.current.getBoundingClientRect();
-        // Set position relative to the hero section's center
-        setMousePosition({ 
-          x: event.clientX - (rect.left + rect.width / 2),
-          y: event.clientY - (rect.top + rect.height / 2)
-        });
-      }
-    };
-    
-    const handleMouseLeave = () => {
-      // Reset position when mouse leaves the hero section
-      setMousePosition({ x: 0, y: 0 });
-    }
-
-    const heroElement = heroRef.current;
-    if (heroElement) {
-        heroElement.addEventListener('mousemove', handleMouseMove);
-        heroElement.addEventListener('mouseleave', handleMouseLeave);
-    }
-
-    return () => {
-      if (heroElement) {
-        heroElement.removeEventListener('mousemove', handleMouseMove);
-        heroElement.removeEventListener('mouseleave', handleMouseLeave);
-      }
-    };
-  }, []);
-  
-  const calculateTransform = (factor: number) => {
-    if (!isClient) return {};
-    // Movement is now based on the mouse position relative to the hero section center
-    const x = mousePosition.x * factor;
-    const y = mousePosition.y * factor;
-    return {
-      transform: `translate(${x}px, ${y}px)`,
-    };
-  };
-
-
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section ref={heroRef} className="relative py-20 sm:py-32 overflow-hidden">
-         {/* Floating Background Images */}
-        <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10">
-            <div style={calculateTransform(0.02)} className="transition-transform duration-500 ease-out">
-                <Image src="https://picsum.photos/seed/1/400/225" alt="sample 1" width={200} height={112} className="absolute top-[10%] left-[5%] rounded-xl shadow-2xl" data-ai-hint="gaming thumbnail" />
-            </div>
-            <div style={calculateTransform(-0.03)} className="transition-transform duration-500 ease-out">
-                <Image src="https://picsum.photos/seed/2/400/225" alt="sample 2" width={200} height={112} className="absolute top-[20%] right-[10%] rounded-xl shadow-2xl" data-ai-hint="vlog thumbnail" />
-            </div>
-            <div style={calculateTransform(0.015)} className="transition-transform duration-500 ease-out">
-                <Image src="https://picsum.photos/seed/3/400/225" alt="sample 3" width={200} height={112} className="absolute bottom-[25%] left-[20%] rounded-xl shadow-2xl" data-ai-hint="tech review" />
-            </div>
-             <div style={calculateTransform(-0.025)} className="transition-transform duration-500 ease-out">
-                <Image src="https://picsum.photos/seed/4/400/225" alt="sample 4" width={200} height={112} className="absolute bottom-[10%] right-[25%] rounded-xl shadow-2xl" data-ai-hint="finance chart" />
-            </div>
-             <div style={calculateTransform(0.035)} className="transition-transform duration-500 ease-out">
-                <Image src="https://picsum.photos/seed/5/400/225" alt="sample 5" width={200} height={112} className="absolute top-[50%] left-[45%] rounded-xl shadow-2xl" data-ai-hint="tutorial thumbnail" />
-            </div>
-            <div style={calculateTransform(-0.01)} className="transition-transform duration-500 ease-out">
-                <Image src="https://picsum.photos/seed/6/400/225" alt="sample 6" width={200} height={112} className="absolute bottom-[10%] left-[2%] rounded-xl shadow-2xl" data-ai-hint="cooking show" />
-            </div>
-            <div style={calculateTransform(0.022)} className="transition-transform duration-500 ease-out">
-                <Image src="https://picsum.photos/seed/7/400/225" alt="sample 7" width={200} height={112} className="absolute top-[75%] right-[15%] rounded-xl shadow-2xl" data-ai-hint="fitness workout" />
-            </div>
-            <div style={calculateTransform(-0.018)} className="transition-transform duration-500 ease-out">
-                <Image src="https://picsum.photos/seed/8/400/225" alt="sample 8" width={200} height={112} className="absolute bottom-[5%] right-[5%] rounded-xl shadow-2xl" data-ai-hint="travel vlog" />
-            </div>
-        </div>
-
+      <section className="relative py-20 sm:py-32 overflow-hidden bg-muted/20">
         <div className="container relative mx-auto px-4 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl font-headline">
             Create Stunning Thumbnails in Seconds
