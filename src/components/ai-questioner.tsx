@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Loader2, Sparkles, Wand2 } from 'lucide-react';
+import { Loader2, Sparkles, Wand2, CaseUpper } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { aiImageQuestioning } from '@/ai/flows/ai-image-questioning';
 import type { Prompt } from '@/lib/types';
@@ -41,32 +41,29 @@ export function AiQuestioner({ uploadedImage, isLoading, setIsLoading, addPrompt
     defaultValues: { question: '' },
   });
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
-    if (!uploadedImage) {
+  async function getSuggestion(question: string) {
+     if (!uploadedImage) {
       toast({
         variant: 'destructive',
         title: 'No Image Uploaded',
         description: 'Please upload an image before asking a question.',
       });
-      return;
+      return null;
     }
     
-    setIsLoading({ ...isLoading, questioner: true });
-    setSuggestion(null);
-
     try {
       const result = await aiImageQuestioning({
         photoDataUri: uploadedImage,
-        userQuestion: values.question,
+        userQuestion: question,
       });
 
-      setSuggestion(result.thumbnailSuggestion);
       addPrompt({
         type: 'question',
-        original: values.question,
+        original: question,
         result: result.thumbnailSuggestion,
       });
-      form.reset();
+
+      return result.thumbnailSuggestion;
     } catch (error) {
       console.error(error);
       toast({
@@ -74,9 +71,33 @@ export function AiQuestioner({ uploadedImage, isLoading, setIsLoading, addPrompt
         title: 'An Error Occurred',
         description: 'Failed to get suggestions from the AI. Please try again.',
       });
-    } finally {
-      setIsLoading({ ...isLoading, questioner: false });
+      return null;
     }
+  }
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading({ ...isLoading, questioner: true });
+    setSuggestion(null);
+
+    const result = await getSuggestion(values.question);
+    if(result) {
+      setSuggestion(result);
+      form.reset();
+    }
+    
+    setIsLoading({ ...isLoading, questioner: false });
+  }
+
+  async function handleSuggestText() {
+    setIsLoading({ ...isLoading, suggestText: true });
+    
+    const result = await getSuggestion('Suggest a catchy title for this image.');
+    if (result) {
+        setOverlayText(result);
+        toast({ title: "Suggested text has been applied to the thumbnail." });
+    }
+
+    setIsLoading({ ...isLoading, suggestText: false });
   }
 
   return (
@@ -86,10 +107,20 @@ export function AiQuestioner({ uploadedImage, isLoading, setIsLoading, addPrompt
           <Sparkles className="mr-2 text-primary" /> AI Assistant
         </CardTitle>
         <CardDescription>
-          Ask a question about your uploaded image to get thumbnail ideas.
+          Ask a question for thumbnail ideas or let the AI suggest a title.
         </CardDescription>
       </CardHeader>
       <CardContent>
+         <Button onClick={handleSuggestText} className="w-full mb-6" disabled={isLoading.suggestText || !uploadedImage}>
+            {isLoading.suggestText ? (
+                <Loader2 className="animate-spin" />
+            ) : (
+                <>
+                    <CaseUpper className="mr-2" /> Suggest Overlay Text
+                </>
+            )}
+        </Button>
+
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
@@ -97,9 +128,9 @@ export function AiQuestioner({ uploadedImage, isLoading, setIsLoading, addPrompt
               name="question"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your Question</FormLabel>
+                  <FormLabel>Ask a Question</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g., 'What's a good title for a video about this?'" {...field} />
+                    <Input placeholder="e.g., 'What's a good theme for a video about this?'" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

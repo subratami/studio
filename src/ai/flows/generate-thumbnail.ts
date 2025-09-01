@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {googleAI} from '@genkit-ai/googleai';
 
 const GenerateThumbnailInputSchema = z.object({
   prompt: z.string().describe('The text prompt for generating the thumbnail image.'),
@@ -42,16 +43,37 @@ const generateThumbnailFlow = ai.defineFlow(
     outputSchema: GenerateThumbnailOutputSchema,
   },
   async (input) => {
-    let imageDataUri: string;
+    let media;
     
-    // This flow simulates image generation to avoid quota/billing errors.
-    // In a production app, you would use a real image generation model here.
     if (input.photoDataUri) {
-      // For image-to-image, return a new random placeholder to simulate a change.
-      imageDataUri = `https://picsum.photos/1280/720?random=${Math.random()}`;
+      // Image-to-image generation
+      const result = await ai.generate({
+        model: googleAI.model('gemini-2.0-flash-preview-image-generation'),
+        prompt: [
+          {text: input.prompt},
+          {media: {url: input.photoDataUri!}},
+        ],
+        config: {
+          responseModalities: ['TEXT', 'IMAGE'],
+        },
+      });
+      media = result.media;
     } else {
-      // For text-to-image, return a standard placeholder.
-      imageDataUri = `https://picsum.photos/1280/720`;
+      // Text-to-image generation
+      const result = await ai.generate({
+        model: googleAI.model('imagen-4.0-fast-generate-001'),
+        prompt: input.prompt
+      });
+      media = result.media;
+    }
+
+    if (!media || !media.url) {
+        throw new Error('Image generation failed to return any media. Please try a different prompt.');
+    }
+    
+    const imageDataUri = media.url;
+    if (!imageDataUri) {
+        throw new Error('Image generation failed to return a data URI.');
     }
 
     return { imageDataUri };

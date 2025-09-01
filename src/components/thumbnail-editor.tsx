@@ -14,6 +14,7 @@ export function ThumbnailEditor() {
     questioner: false,
     enhancer: false,
     generator: false,
+    suggestText: false,
   });
 
   const handleSetUploadedImage = (image: string | null) => {

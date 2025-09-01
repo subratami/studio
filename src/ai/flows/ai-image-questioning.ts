@@ -17,12 +17,12 @@ const AIImageQuestioningInputSchema = z.object({
     .describe(
       "A photo to use as a thumbnail base, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
-  userQuestion: z.string().describe('The user question about the image.'),
+  userQuestion: z.string().describe('The user question about the image. Can be a topic or a general query.'),
 });
 export type AIImageQuestioningInput = z.infer<typeof AIImageQuestioningInputSchema>;
 
 const AIImageQuestioningOutputSchema = z.object({
-  thumbnailSuggestion: z.string().describe('AI-driven suggestions for thumbnail design.'),
+  thumbnailSuggestion: z.string().describe('AI-driven suggestions for thumbnail design or a catchy title.'),
 });
 export type AIImageQuestioningOutput = z.infer<typeof AIImageQuestioningOutputSchema>;
 
@@ -34,12 +34,14 @@ const prompt = ai.definePrompt({
   name: 'aiImageQuestioningPrompt',
   input: {schema: AIImageQuestioningInputSchema},
   output: {schema: AIImageQuestioningOutputSchema},
-  prompt: `You are an AI thumbnail design assistant. A user has uploaded an image and asked a question about it. Use the image and question to suggest a relevant thumbnail design.
+  prompt: `You are an AI thumbnail design assistant. A user has uploaded an image and asked a question about it. 
+  
+  If the user asks for a 'title', 'headline', or 'text', provide a very short, catchy title (max 5 words) suitable for a thumbnail overlay.
+  Otherwise, provide a concise suggestion for the thumbnail design based on the image and their question.
 
 Image: {{media url=photoDataUri}}
 Question: {{{userQuestion}}}
-
-Suggestion: `,
+`,
 });
 
 const aiImageQuestioningFlow = ai.defineFlow(
