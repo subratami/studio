@@ -12,6 +12,7 @@ export function ThumbnailEditor() {
   const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({
     questioner: false,
     enhancer: false,
+    generator: false,
   });
 
   useEffect(() => {

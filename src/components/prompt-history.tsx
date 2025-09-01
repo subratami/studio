@@ -7,12 +7,23 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { History, Copy, Trash2, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { Prompt } from '@/lib/types';
+import { cva } from 'class-variance-authority';
 
 interface PromptHistoryProps {
   prompts: Prompt[];
   setOverlayText: (text: string) => void;
   clearPrompts: () => void;
 }
+
+const badgeVariants = cva('', {
+  variants: {
+    variant: {
+      question: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300',
+      enhancement: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300',
+      generation: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300',
+    },
+  },
+});
 
 export function PromptHistory({ prompts, setOverlayText, clearPrompts }: PromptHistoryProps) {
   const { toast } = useToast();
@@ -55,19 +66,19 @@ export function PromptHistory({ prompts, setOverlayText, clearPrompts }: PromptH
                 <div key={prompt.id} className="p-3 rounded-lg border bg-card text-card-foreground shadow-sm">
                   <div className="flex justify-between items-start">
                     <div>
-                      <Badge variant={prompt.type === 'question' ? 'secondary' : 'default'} className="mb-2">
+                      <Badge className={badgeVariants({variant: prompt.type as any})}>
                         {prompt.type}
                       </Badge>
-                      <p className="text-sm font-semibold">Q: {prompt.original}</p>
-                      <p className="text-sm text-muted-foreground mt-1 font-code">A: {prompt.result}</p>
+                      <p className="text-sm font-semibold mt-2">Original: {prompt.original}</p>
+                      <p className="text-sm text-muted-foreground mt-1 font-code">Result: {prompt.result}</p>
                     </div>
                     <span className="text-xs text-muted-foreground whitespace-nowrap pl-2">{formatTimeAgo(prompt.timestamp)}</span>
                   </div>
                   <div className="flex gap-2 mt-3">
                      <Button size="sm" variant="outline" onClick={() => handleCopy(prompt.result)}>
-                        <Copy className="mr-2 h-3 w-3" /> Copy
+                        <Copy className="mr-2 h-3 w-3" /> Copy Result
                      </Button>
-                      {prompt.type === 'question' && (
+                      {(prompt.type === 'question' || prompt.type === 'enhancement') && (
                         <Button size="sm" variant="outline" onClick={() => setOverlayText(prompt.result.substring(0, 50))}>
                            <Wand2 className="mr-2 h-3 w-3" /> Use Text
                         </Button>

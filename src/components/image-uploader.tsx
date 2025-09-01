@@ -1,19 +1,24 @@
 'use client';
 
 import { UploadCloud, X } from 'lucide-react';
-import { useRef, useState, useCallback, type DragEvent } from 'react';
+import { useRef, useState, useCallback, type DragEvent, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { Button } from './ui/button';
 
 interface ImageUploaderProps {
   setUploadedImage: (image: string | null) => void;
+  uploadedImage: string | null;
 }
 
-export function ImageUploader({ setUploadedImage }: ImageUploaderProps) {
+export function ImageUploader({ setUploadedImage, uploadedImage }: ImageUploaderProps) {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setImagePreview(uploadedImage);
+  }, [uploadedImage]);
 
   const handleFile = useCallback(
     (file: File) => {
@@ -21,7 +26,6 @@ export function ImageUploader({ setUploadedImage }: ImageUploaderProps) {
         const reader = new FileReader();
         reader.onload = e => {
           const result = e.target?.result as string;
-          setImagePreview(result);
           setUploadedImage(result);
         };
         reader.readAsDataURL(file);
@@ -57,7 +61,6 @@ export function ImageUploader({ setUploadedImage }: ImageUploaderProps) {
   };
 
   const handleRemoveImage = () => {
-    setImagePreview(null);
     setUploadedImage(null);
     if(fileInputRef.current) {
         fileInputRef.current.value = "";
