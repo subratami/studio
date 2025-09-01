@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -9,8 +10,10 @@ import { useState, useEffect } from 'react';
 
 export function LandingPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
+    setIsClient(true);
     const handleMouseMove = (event: MouseEvent) => {
       setMousePosition({ x: event.clientX, y: event.clientY });
     };
@@ -23,7 +26,7 @@ export function LandingPage() {
   }, []);
   
   const calculateTransform = (factor: number) => {
-    if (typeof window === 'undefined') return {};
+    if (!isClient) return {};
     const x = (mousePosition.x - window.innerWidth / 2) * factor;
     const y = (mousePosition.y - window.innerHeight / 2) * factor;
     return {
