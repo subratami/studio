@@ -43,6 +43,9 @@ export async function signup(values: z.infer<typeof formSchema>): Promise<{ succ
     return { success: true, message: 'Signup successful! You can now log in.' };
 
   } catch (error) {
+    if (!process.env.MONGODB_URI) {
+      return { success: false, message: 'Database configuration is missing. Please contact support.' };
+    }
     console.error('Database error:', error);
     return { success: false, message: 'An internal error occurred. Please try again later.' };
   }
