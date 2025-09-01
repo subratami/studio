@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -49,7 +50,9 @@ export function ThumbnailEditor() {
       const updatedPrompts = [newPrompt, ...currentPrompts].slice(0, 50);
 
       try {
-        sessionStorage.setItem('thumbgenius_prompts', JSON.stringify(updatedPrompts));
+        // Create a version of the prompts without the large image data for session storage
+        const storablePrompts = updatedPrompts.map(({ imageDataUri, ...rest }) => rest);
+        sessionStorage.setItem('thumbgenius_prompts', JSON.stringify(storablePrompts));
       } catch (error) {
         console.error('Failed to save prompts to session storage:', error);
       }

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -14,6 +15,7 @@ interface PromptHistoryProps {
   prompts: Prompt[];
   setOverlayText: (text: string) => void;
   clearPrompts: () => void;
+  setUploadedImage: (image: string | null) => void; // Changed from setGeneratedImage
   setGeneratedImage: (image: string | null) => void;
 }
 
@@ -27,7 +29,7 @@ const badgeVariants = cva('', {
   },
 });
 
-export function PromptHistory({ prompts, setOverlayText, clearPrompts, setGeneratedImage }: PromptHistoryProps) {
+export function PromptHistory({ prompts, setOverlayText, clearPrompts, setUploadedImage, setGeneratedImage }: PromptHistoryProps) {
   const { toast } = useToast();
 
   const handleCopy = (text: string) => {
@@ -36,8 +38,9 @@ export function PromptHistory({ prompts, setOverlayText, clearPrompts, setGenera
   };
   
   const handleUseImage = (imageDataUri: string) => {
-    setGeneratedImage(imageDataUri);
-    toast({ title: 'Image loaded into preview.' });
+    setUploadedImage(imageDataUri); // Use the history image as a new base
+    setGeneratedImage(null); // Clear any derived image
+    toast({ title: 'Image loaded into uploader.' });
   };
 
   const formatTimeAgo = (date: Date) => {
@@ -83,7 +86,7 @@ export function PromptHistory({ prompts, setOverlayText, clearPrompts, setGenera
                   </div>
                   {prompt.imageDataUri && (
                     <div className="mt-3 relative w-full aspect-video rounded-md overflow-hidden">
-                       <Image src={prompt.imageDataUri} alt="Generated thumbnail from history" layout="fill" objectFit="cover" />
+                       <Image src={prompt.imageDataUri} alt="Generated thumbnail from history" fill objectFit="cover" />
                     </div>
                   )}
                   <div className="flex gap-2 mt-3">
