@@ -1,8 +1,6 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
+import { getAuth, type Auth } from "firebase/auth";
 
-// This is a placeholder for the Firebase config.
-// In a real application, you would get this from the Firebase Console.
 const firebaseConfig = {
   "projectId": "thumbgenius-pz762",
   "appId": "1:675902510186:web:2574aefee340d51ce1e613",
@@ -14,7 +12,16 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
-const auth = getAuth(app);
+let app: FirebaseApp;
+let auth: Auth;
+
+if (getApps().length === 0) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
+}
+
+auth = getAuth(app);
+
 
 export { app, auth };
