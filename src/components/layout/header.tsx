@@ -2,7 +2,7 @@ import { BrainCircuit, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { LoginForm } from '@/components/login-form';
 import { SignupForm } from '@/components/signup-form';
 
@@ -21,6 +21,10 @@ export function Header() {
               <Button variant="ghost">Login</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Login</DialogTitle>
+                <DialogDescription>Enter your credentials to access your account.</DialogDescription>
+              </DialogHeader>
               <LoginForm />
             </DialogContent>
           </Dialog>
@@ -31,6 +35,10 @@ export function Header() {
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
+               <DialogHeader>
+                <DialogTitle>Sign Up</DialogTitle>
+                <DialogDescription>Create an account to get started.</DialogDescription>
+              </DialogHeader>
               <SignupForm />
             </DialogContent>
           </Dialog>
