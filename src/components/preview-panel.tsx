@@ -42,7 +42,7 @@ export function PreviewPanel({ displayImage, overlayText, setOverlayText }: Prev
     if (!ctx) return;
 
     const img = new window.Image();
-    img.crossOrigin = "anonymous"; // Required for tainted canvas
+    // img.crossOrigin = "anonymous"; // This was causing issues with picsum.photos
     img.src = displayImage;
     img.onload = () => {
       const canvasWidth = 1280;
@@ -102,14 +102,61 @@ export function PreviewPanel({ displayImage, overlayText, setOverlayText }: Prev
     const canvas = canvasRef.current;
     if (!canvas || !displayImage) return;
 
-    drawCanvas(); // Ensure canvas is up-to-date
+    // We need a fresh canvas drawing to avoid CORS issues when downloading.
+    const downloadCanvas = document.createElement('canvas');
+    const downloadCtx = downloadCanvas.getContext('2d');
+    if (!downloadCtx) return;
     
-    setTimeout(() => {
+    const img = new window.Image();
+    // Do NOT set crossOrigin here for picsum.photos, it taints the canvas for download.
+    img.src = displayImage;
+    img.onload = () => {
+        const canvasWidth = 1280;
+        const canvasHeight = 720;
+        downloadCanvas.width = canvasWidth;
+        downloadCanvas.height = canvasHeight;
+
+        const imgAspectRatio = img.width / img.height;
+        const canvasAspectRatio = canvasWidth / canvasHeight;
+        let sx, sy, sWidth, sHeight;
+
+        if (imgAspectRatio > canvasAspectRatio) {
+            sHeight = img.height;
+            sWidth = sHeight * canvasAspectRatio;
+            sx = (img.width - sWidth) / 2;
+            sy = 0;
+        } else {
+            sWidth = img.width;
+            sHeight = sWidth / canvasAspectRatio;
+            sx = 0;
+            sy = (img.height - sHeight) / 2;
+        }
+        downloadCtx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, canvasWidth, canvasHeight);
+
+        const fontSize = Math.floor(canvasWidth / 20);
+        downloadCtx.font = `700 ${fontSize}px "Space Grotesk", sans-serif`;
+        downloadCtx.fillStyle = 'white';
+        downloadCtx.textAlign = 'center';
+        downloadCtx.textBaseline = 'middle';
+        downloadCtx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+        downloadCtx.shadowBlur = 10;
+        downloadCtx.shadowOffsetX = 5;
+        downloadCtx.shadowOffsetY = 5;
+
+        const lines = overlayText.split('\n');
+        const lineHeight = fontSize * 1.2;
+        const totalHeight = lines.length * lineHeight;
+        const startY = (canvasHeight - totalHeight) / 2 + lineHeight / 2;
+
+        lines.forEach((line, index) => {
+            downloadCtx.fillText(line, canvasWidth / 2, startY + index * lineHeight);
+        });
+
         const link = document.createElement('a');
         link.download = 'thumbnail.png';
-        link.href = canvas.toDataURL('image/png');
+        link.href = downloadCanvas.toDataURL('image/png');
         link.click();
-    }, 100); // Small delay to ensure canvas has been drawn
+    }
   };
 
   return (
