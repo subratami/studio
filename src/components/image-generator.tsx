@@ -19,6 +19,8 @@ import { useToast } from '@/hooks/use-toast';
 import { generateThumbnail } from '@/ai/flows/generate-thumbnail';
 import type { Prompt } from '@/lib/types';
 import { enhanceThumbnailPrompt } from '@/ai/flows/enhance-thumbnail-prompt';
+import { RadioGroup, RadioGroupItem } from './ui/radio-group';
+import { useState, useEffect } from 'react';
 
 const formSchema = z.object({
   prompt: z.string().min(5, 'Please enter a more detailed prompt.').max(500),
@@ -34,6 +36,15 @@ interface ImageGeneratorProps {
 
 export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploadedImage, uploadedImage }: ImageGeneratorProps) {
   const { toast } = useToast();
+  const [generationMode, setGenerationMode] = useState<'text-to-image' | 'image-to-image'>('text-to-image');
+
+  useEffect(() => {
+    if (uploadedImage) {
+      setGenerationMode('image-to-image');
+    } else {
+      setGenerationMode('text-to-image');
+    }
+  }, [uploadedImage]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -52,7 +63,7 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
 
       const result = await generateThumbnail({
         prompt: enhancedPrompt,
-        photoDataUri: uploadedImage || undefined,
+        photoDataUri: generationMode === 'image-to-image' ? uploadedImage! : undefined,
       });
 
       setUploadedImage(result.imageDataUri);
@@ -76,11 +87,9 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
     }
   }
 
-  const title = uploadedImage ? 'Image-to-Image Generator' : 'Image Generator';
-  const description = uploadedImage
-    ? 'Use the uploaded image as a base and describe the changes you want to make.'
-    : 'Create a new thumbnail from a text prompt. The prompt will be automatically enhanced.';
-  const placeholder = uploadedImage
+  const title = 'Image Generator';
+  const description = 'Create a new thumbnail from a text prompt or modify an uploaded image.';
+  const placeholder = generationMode === 'image-to-image'
     ? "e.g., 'Make the background a vibrant galaxy'"
     : "e.g., 'A vibrant abstract background with geometric shapes'";
 
@@ -97,6 +106,36 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <RadioGroup
+              value={generationMode}
+              onValueChange={(value) => setGenerationMode(value as any)}
+              className="grid grid-cols-2 gap-4"
+            >
+              <div>
+                <RadioGroupItem value="text-to-image" id="text-to-image" className="peer sr-only" />
+                <Label
+                  htmlFor="text-to-image"
+                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary"
+                >
+                  Text-to-Image
+                </Label>
+              </div>
+              <div>
+                <RadioGroupItem
+                  value="image-to-image"
+                  id="image-to-image"
+                  className="peer sr-only"
+                  disabled={!uploadedImage}
+                />
+                <Label
+                  htmlFor="image-to-image"
+                  className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+                >
+                  Image-to-Image
+                </Label>
+              </div>
+            </RadioGroup>
+
             <FormField
               control={form.control}
               name="prompt"
