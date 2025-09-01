@@ -55,13 +55,23 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading({ ...isLoading, generator: true });
+    let enhancedPrompt = values.prompt;
 
     try {
-      const enhancementResult = await enhanceThumbnailPrompt({
-        prompt: values.prompt,
-      });
-
-      const enhancedPrompt = enhancementResult.enhancedPrompt;
+      // Try to enhance the prompt, but fall back to the original if it fails
+      try {
+        const enhancementResult = await enhanceThumbnailPrompt({
+          prompt: values.prompt,
+        });
+        enhancedPrompt = enhancementResult.enhancedPrompt;
+      } catch (enhancementError) {
+        console.warn('Could not enhance prompt, falling back to original.', enhancementError);
+        toast({
+          variant: 'default',
+          title: 'AI Enhancer Unavailable',
+          description: "Using your original prompt for generation.",
+        });
+      }
 
       const result = await generateThumbnail({
         prompt: enhancedPrompt,
