@@ -2,6 +2,9 @@ import { BrainCircuit, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { LoginForm } from '@/components/login-form';
+import { SignupForm } from '@/components/signup-form';
 
 export function Header() {
   return (
@@ -13,16 +16,24 @@ export function Header() {
         </Link>
         <div className="flex items-center gap-2">
           <ThemeToggle />
-           <Link href="/login">
-            <Button variant="ghost">
-              Login
-            </Button>
-          </Link>
-          <Link href="/signup">
-            <Button>
-              Sign Up <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </Link>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="ghost">Login</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <LoginForm />
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button>
+                Sign Up <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <SignupForm />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </header>
