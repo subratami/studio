@@ -7,6 +7,7 @@ import type { Prompt } from '@/lib/types';
 
 export function ThumbnailEditor() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [overlayText, setOverlayText] = useState<string>('Your Catchy Title Here');
   const [prompts, setPrompts] = useState<Prompt[]>([]);
   const [isLoading, setIsLoading] = useState<{ [key: string]: boolean }>({
@@ -14,6 +15,12 @@ export function ThumbnailEditor() {
     enhancer: false,
     generator: false,
   });
+
+  const handleSetUploadedImage = (image: string | null) => {
+    setUploadedImage(image);
+    // When a new image is uploaded, clear any previously generated image
+    setGeneratedImage(null);
+  }
 
   useEffect(() => {
     try {
@@ -59,7 +66,8 @@ export function ThumbnailEditor() {
     <div className="container mx-auto grid flex-1 gap-8 px-4 py-8 md:grid-cols-2 lg:grid-cols-5 xl:gap-12">
       <div className="flex flex-col gap-8 lg:col-span-2">
         <ControlPanel
-          setUploadedImage={setUploadedImage}
+          setUploadedImage={handleSetUploadedImage}
+          setGeneratedImage={setGeneratedImage}
           setOverlayText={setOverlayText}
           prompts={prompts}
           addPrompt={addPrompt}
@@ -71,7 +79,7 @@ export function ThumbnailEditor() {
       </div>
       <div className="lg:col-span-3">
         <PreviewPanel
-          uploadedImage={uploadedImage}
+          displayImage={generatedImage || uploadedImage}
           overlayText={overlayText}
           setOverlayText={setOverlayText}
         />

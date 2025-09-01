@@ -11,6 +11,7 @@ import type { Prompt } from '@/lib/types';
 
 interface ControlPanelProps {
   setUploadedImage: (image: string | null) => void;
+  setGeneratedImage: (image: string | null) => void;
   setOverlayText: (text: string) => void;
   prompts: Prompt[];
   addPrompt: (newPromptData: Omit<Prompt, 'id' | 'timestamp'>) => void;

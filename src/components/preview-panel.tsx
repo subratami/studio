@@ -9,12 +9,12 @@ import { Download, Image as ImageIcon } from 'lucide-react';
 import Image from 'next/image';
 
 interface PreviewPanelProps {
-  uploadedImage: string | null;
+  displayImage: string | null;
   overlayText: string;
   setOverlayText: (text: string) => void;
 }
 
-export function PreviewPanel({ uploadedImage, overlayText, setOverlayText }: PreviewPanelProps) {
+export function PreviewPanel({ displayImage, overlayText, setOverlayText }: PreviewPanelProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const [previewSize, setPreviewSize] = useState({ width: 0, height: 0 });
@@ -36,13 +36,14 @@ export function PreviewPanel({ uploadedImage, overlayText, setOverlayText }: Pre
 
   const drawCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !uploadedImage) return;
+    if (!canvas || !displayImage) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const img = new window.Image();
-    img.src = uploadedImage;
+    img.crossOrigin = "anonymous"; // Required for tainted canvas
+    img.src = displayImage;
     img.onload = () => {
       const canvasWidth = 1280;
       const canvasHeight = 720;
@@ -87,7 +88,10 @@ export function PreviewPanel({ uploadedImage, overlayText, setOverlayText }: Pre
         ctx.fillText(line, canvasWidth / 2, startY + index * lineHeight);
       });
     };
-  }, [uploadedImage, overlayText]);
+     img.onerror = () => {
+        console.error("Failed to load image for canvas");
+    }
+  }, [displayImage, overlayText]);
 
   useEffect(() => {
     drawCanvas();
@@ -96,7 +100,7 @@ export function PreviewPanel({ uploadedImage, overlayText, setOverlayText }: Pre
 
   const handleDownload = () => {
     const canvas = canvasRef.current;
-    if (!canvas || !uploadedImage) return;
+    if (!canvas || !displayImage) return;
 
     drawCanvas(); // Ensure canvas is up-to-date
     
@@ -119,9 +123,9 @@ export function PreviewPanel({ uploadedImage, overlayText, setOverlayText }: Pre
           onLoad={updatePreviewSize}
           className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted/50 border shadow-inner"
         >
-          {uploadedImage ? (
+          {displayImage ? (
             <Image
-              src={uploadedImage}
+              src={displayImage}
               alt="Thumbnail preview"
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -134,7 +138,7 @@ export function PreviewPanel({ uploadedImage, overlayText, setOverlayText }: Pre
               <p className="mt-2">Upload an image to see a preview</p>
             </div>
           )}
-          {uploadedImage && (
+          {displayImage && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/20 p-4">
               <h2
                 className="text-center font-bold text-white transition-all"
@@ -159,14 +163,14 @@ export function PreviewPanel({ uploadedImage, overlayText, setOverlayText }: Pre
             id="overlay-text"
             value={overlayText}
             onChange={e => setOverlayText(e.target.value)}
-            disabled={!uploadedImage}
+            disabled={!displayImage}
             className="mt-2"
           />
         </div>
         <Button
           onClick={handleDownload}
           className="w-full bg-accent text-accent-foreground hover:bg-accent/90 font-bold"
-          disabled={!uploadedImage}
+          disabled={!displayImage}
         >
           <Download className="mr-2" />
           Download Thumbnail

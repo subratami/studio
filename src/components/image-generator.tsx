@@ -32,10 +32,11 @@ interface ImageGeneratorProps {
   setIsLoading: (loading: { [key:string]: boolean }) => void;
   addPrompt: (newPromptData: Omit<Prompt, 'id' | 'timestamp'>) => void;
   setUploadedImage: (image: string | null) => void;
+  setGeneratedImage: (image: string | null) => void;
   uploadedImage: string | null;
 }
 
-export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploadedImage, uploadedImage }: ImageGeneratorProps) {
+export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploadedImage, setGeneratedImage, uploadedImage }: ImageGeneratorProps) {
   const { toast } = useToast();
   const [generationMode, setGenerationMode] = useState<'text-to-image' | 'image-to-image'>('text-to-image');
 
@@ -66,8 +67,14 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
         prompt: enhancedPrompt,
         photoDataUri: generationMode === 'image-to-image' ? uploadedImage! : undefined,
       });
-
-      setUploadedImage(result.imageDataUri);
+      
+      if (generationMode === 'text-to-image') {
+        // For text-to-image, we replace the uploaded image.
+        setUploadedImage(result.imageDataUri);
+      } else {
+        // For image-to-image, we set the generated image separately.
+        setGeneratedImage(result.imageDataUri);
+      }
 
       addPrompt({
         type: 'generation',

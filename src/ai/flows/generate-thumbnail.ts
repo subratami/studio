@@ -10,7 +10,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { googleAI } from '@genkit-ai/googleai';
 
 const GenerateThumbnailInputSchema = z.object({
   prompt: z.string().describe('The text prompt for generating the thumbnail image.'),
@@ -44,19 +43,17 @@ const generateThumbnailFlow = ai.defineFlow(
   },
   async (input) => {
     let imageDataUri: string;
-
+    
+    // This flow simulates image generation to avoid quota/billing errors.
+    // In a production app, you would use a real image generation model here.
     if (input.photoDataUri) {
-      // For image-to-image, return a new placeholder to simulate a change.
+      // For image-to-image, return a new random placeholder to simulate a change.
       imageDataUri = `https://picsum.photos/1280/720?random=${Math.random()}`;
     } else {
-      // For text-to-image, return a placeholder to avoid quota errors.
-      imageDataUri = 'https://picsum.photos/1280/720';
+      // For text-to-image, return a standard placeholder.
+      imageDataUri = `https://picsum.photos/1280/720`;
     }
 
-    if (!imageDataUri) {
-        throw new Error('Image generation failed to produce an image. Please try again.');
-    }
-    
     return { imageDataUri };
   }
 );
