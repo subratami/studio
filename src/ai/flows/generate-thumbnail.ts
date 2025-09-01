@@ -37,16 +37,8 @@ const generateThumbnailFlow = ai.defineFlow(
     outputSchema: GenerateThumbnailOutputSchema,
   },
   async input => {
-    const { media } = await ai.generate({
-        model: googleAI.model('imagen-4.0-fast-generate-001'),
-        prompt: input.prompt
-    });
-    
-    if (!media?.url) {
-        throw new Error('Image generation failed to return a data URI.');
-    }
-    const imageDataUri = media.url;
-
+    // Using a placeholder service to avoid billing issues with Imagen.
+    const imageDataUri = 'https://picsum.photos/1280/720';
     return { imageDataUri };
   }
 );
