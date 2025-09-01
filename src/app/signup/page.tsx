@@ -18,6 +18,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Header } from '@/components/layout/header';
+import { signup } from './actions';
+import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -26,6 +29,9 @@ const formSchema = z.object({
 });
 
 export default function SignupPage() {
+  const { toast } = useToast();
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -35,9 +41,21 @@ export default function SignupPage() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // TODO: Implement signup logic
-    console.log(values);
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    try {
+      await signup(values);
+      toast({
+        title: 'Signup Successful!',
+        description: 'You can now log in with your new account.',
+      });
+      router.push('/login');
+    } catch (error) {
+       toast({
+        variant: 'destructive',
+        title: 'An Error Occurred',
+        description: 'An unexpected error occurred. Please try again.',
+      });
+    }
   }
 
   return (
@@ -91,8 +109,8 @@ export default function SignupPage() {
                         </FormItem>
                     )}
                     />
-                    <Button type="submit" className="w-full">
-                    Create Account
+                    <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
                     </Button>
                 </form>
                 </Form>
