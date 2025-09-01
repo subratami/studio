@@ -21,7 +21,7 @@ const GenerateThumbnailOutputSchema = z.object({
   imageDataUri: z
     .string()
     .describe(
-      "The generated image as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "The generated image as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'"
     ),
 });
 export type GenerateThumbnailOutput = z.infer<typeof GenerateThumbnailOutputSchema>;
@@ -38,14 +38,14 @@ const generateThumbnailFlow = ai.defineFlow(
   },
   async input => {
     const { media } = await ai.generate({
-        model: googleAI.model('gemini-1.5-flash-latest'),
+        model: googleAI.model('imagen-4.0-fast-generate-001'),
         prompt: input.prompt
     });
     
-    const imageDataUri = media.url;
-    if (!imageDataUri) {
+    if (!media?.url) {
         throw new Error('Image generation failed to return a data URI.');
     }
+    const imageDataUri = media.url;
 
     return { imageDataUri };
   }
