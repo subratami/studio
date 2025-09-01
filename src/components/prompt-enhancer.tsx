@@ -18,7 +18,8 @@ import { Loader2, Copy, Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { enhanceThumbnailPrompt } from '@/ai/flows/enhance-thumbnail-prompt';
 import type { Prompt } from '@/lib/types';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   prompt: z.string().min(5, 'Please enter a more detailed prompt.').max(500),
@@ -30,14 +31,29 @@ interface PromptEnhancerProps {
   addPrompt: (newPromptData: Omit<Prompt, 'id' | 'timestamp'>) => void;
 }
 
+const categories = ['Tech', 'Gaming', 'Vlog', 'Finance', 'Tutorial'];
+const styles = ['Minimal', 'Cinematic', 'Fun'];
+
 export function PromptEnhancer({ isLoading, setIsLoading, addPrompt }: PromptEnhancerProps) {
   const { toast } = useToast();
   const [enhancedPrompt, setEnhancedPrompt] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>('Tech');
+  const [selectedStyle, setSelectedStyle] = useState<string>('Minimal');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { prompt: '' },
   });
+
+  const { setValue, watch } = form;
+  const promptValue = watch('prompt');
+
+  useEffect(() => {
+    const newPrompt = `A professional thumbnail for a ${selectedCategory.toLowerCase()} review channel, featuring a person with a laptop and bold text, in a ${selectedStyle.toLowerCase()} style.`;
+    if (promptValue !== newPrompt) {
+      setValue('prompt', newPrompt);
+    }
+  }, [selectedCategory, selectedStyle, setValue, promptValue]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading({ ...isLoading, enhancer: true });
@@ -54,7 +70,6 @@ export function PromptEnhancer({ isLoading, setIsLoading, addPrompt }: PromptEnh
         original: values.prompt,
         result: result.enhancedPrompt,
       });
-      form.reset();
     } catch (error) {
       console.error(error);
       toast({
@@ -73,7 +88,6 @@ export function PromptEnhancer({ isLoading, setIsLoading, addPrompt }: PromptEnh
       toast({ title: 'Copied to clipboard!' });
     }
   };
-  
 
   return (
     <Card>
@@ -87,13 +101,28 @@ export function PromptEnhancer({ isLoading, setIsLoading, addPrompt }: PromptEnh
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    type="button"
+                    variant={selectedCategory === category ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            
             <FormField
               control={form.control}
               name="prompt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Your Prompt</FormLabel>
                   <FormControl>
                     <Textarea placeholder="e.g., 'A cat wearing a wizard hat'" {...field} />
                   </FormControl>
@@ -101,6 +130,24 @@ export function PromptEnhancer({ isLoading, setIsLoading, addPrompt }: PromptEnh
                 </FormItem>
               )}
             />
+
+            <div>
+              <FormLabel>Styles</FormLabel>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {styles.map((style) => (
+                  <Button
+                    key={style}
+                    type="button"
+                    variant={selectedStyle === style ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setSelectedStyle(style)}
+                  >
+                    {style}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            
             <Button type="submit" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" disabled={isLoading.enhancer}>
               {isLoading.enhancer ? (
                 <Loader2 className="animate-spin" />
