@@ -1,15 +1,61 @@
+'use client';
+
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, ImageIcon, Sparkles, Wand2 } from 'lucide-react';
 import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 export function LandingPage() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      setMousePosition({ x: event.clientX, y: event.clientY });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+  
+  const calculateTransform = (factor: number) => {
+    if (typeof window === 'undefined') return {};
+    const x = (mousePosition.x - window.innerWidth / 2) * factor;
+    const y = (mousePosition.y - window.innerHeight / 2) * factor;
+    return {
+      transform: `translate(${x}px, ${y}px)`,
+    };
+  };
+
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="py-20 sm:py-32">
-        <div className="container mx-auto px-4 text-center">
+      <section className="relative py-20 sm:py-32 overflow-hidden">
+         {/* Floating Background Images */}
+        <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10">
+            <div style={calculateTransform(0.02)} className="transition-transform duration-500 ease-out">
+                <Image src="https://picsum.photos/seed/1/400/225" alt="sample 1" width={400} height={225} className="absolute top-[10%] left-[5%] rounded-xl shadow-2xl" data-ai-hint="gaming thumbnail" />
+            </div>
+            <div style={calculateTransform(-0.03)} className="transition-transform duration-500 ease-out">
+                <Image src="https://picsum.photos/seed/2/400/225" alt="sample 2" width={400} height={225} className="absolute top-[20%] right-[10%] rounded-xl shadow-2xl" data-ai-hint="vlog thumbnail" />
+            </div>
+            <div style={calculateTransform(0.015)} className="transition-transform duration-500 ease-out">
+                <Image src="https://picsum.photos/seed/3/400/225" alt="sample 3" width={400} height={225} className="absolute bottom-[25%] left-[15%] rounded-xl shadow-2xl" data-ai-hint="tech review" />
+            </div>
+             <div style={calculateTransform(-0.025)} className="transition-transform duration-500 ease-out">
+                <Image src="https://picsum.photos/seed/4/400/225" alt="sample 4" width={400} height={225} className="absolute bottom-[10%] right-[20%] rounded-xl shadow-2xl" data-ai-hint="finance chart" />
+            </div>
+             <div style={calculateTransform(0.035)} className="transition-transform duration-500 ease-out">
+                <Image src="https://picsum.photos/seed/5/400/225" alt="sample 5" width={400} height={225} className="absolute top-[55%] left-[45%] rounded-xl shadow-2xl" data-ai-hint="tutorial thumbnail" />
+            </div>
+        </div>
+
+        <div className="container relative mx-auto px-4 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl font-headline">
             Create Stunning Thumbnails in Seconds
           </h1>
