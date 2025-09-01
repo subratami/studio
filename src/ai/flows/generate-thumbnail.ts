@@ -18,7 +18,7 @@ const GenerateThumbnailInputSchema = z.object({
     .string()
     .optional()
     .describe(
-      "An optional base photo for image-to-image generation, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "An optional base photo for image-to-image generation, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'"
     ),
 });
 export type GenerateThumbnailInput = z.infer<typeof GenerateThumbnailInputSchema>;
@@ -63,10 +63,11 @@ const generateThumbnailFlow = ai.defineFlow(
        media = result.media;
     }
 
-    const imageDataUri = media.url;
-    if (!imageDataUri) {
-        throw new Error('Image generation failed to return a data URI.');
+    if (!media || !media.url) {
+        throw new Error('Image generation failed to return any media. Please try a different prompt.');
     }
+    
+    const imageDataUri = media.url;
     
     return { imageDataUri };
   }
