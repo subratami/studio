@@ -4,7 +4,6 @@
 import { z } from 'zod';
 import bcrypt from 'bcryptjs';
 import clientPromise from '@/lib/mongodb';
-import { redirect } from 'next/navigation';
 
 const formSchema = z.object({
   name: z.string().min(2, { message: 'Name must be at least 2 characters.' }),
@@ -12,16 +11,11 @@ const formSchema = z.object({
   password: z.string().min(8, { message: 'Password must be at least 8 characters.' }),
 });
 
-export async function signup(values: z.infer<typeof formSchema>) {
+export async function signup(values: z.infer<typeof formSchema>): Promise<{ success: boolean; message: string }> {
   const validatedFields = formSchema.safeParse(values);
 
   if (!validatedFields.success) {
-    // This should not happen if the form validation on the client-side works.
-    // However, it's good practice to have server-side validation.
-    // For simplicity, we'll just log the error.
-    // In a real app, you might want to return the error to the user.
-    console.error(validatedFields.error);
-    return;
+    return { success: false, message: 'Invalid form data.' };
   }
 
   const { name, email, password } = validatedFields.data;
@@ -34,11 +28,7 @@ export async function signup(values: z.infer<typeof formSchema>) {
     const existingUser = await usersCollection.findOne({ email });
 
     if (existingUser) {
-        // In a real app, you would return an error message to the user.
-        console.error('User already exists');
-        // For now, let's redirect to login
-        redirect('/login?error=UserAlreadyExists');
-        return;
+        return { success: false, message: 'A user with this email already exists.' };
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -50,13 +40,10 @@ export async function signup(values: z.infer<typeof formSchema>) {
       createdAt: new Date(),
     });
 
+    return { success: true, message: 'Signup successful! You can now log in.' };
+
   } catch (error) {
     console.error('Database error:', error);
-    // In a real app, you might want to redirect to an error page or show a toast.
-    redirect('/signup?error=DatabaseError');
-    return;
+    return { success: false, message: 'An internal error occurred. Please try again later.' };
   }
-
-  // Redirect to the login page after successful signup
-  redirect('/login?signup=success');
 }

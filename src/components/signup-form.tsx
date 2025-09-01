@@ -37,20 +37,22 @@ export function SignupForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    try {
-      await signup(values);
+    const result = await signup(values);
+    if (result.success) {
       toast({
         title: 'Signup Successful!',
-        description: 'You can now log in with your new account.',
+        description: result.message,
       });
       // Close the dialog on success. A bit of a hack, but it works.
-      document.querySelector('[data-radix-dialog-close]')?.dispatchEvent(new Event('click'));
-
-    } catch (error) {
+      const closeButton = document.querySelector('[data-radix-dialog-close]') as HTMLElement;
+        if (closeButton) {
+            closeButton.click();
+        }
+    } else {
        toast({
         variant: 'destructive',
-        title: 'An Error Occurred',
-        description: 'An unexpected error occurred. Please try again.',
+        title: 'Signup Failed',
+        description: result.message,
       });
     }
   }
