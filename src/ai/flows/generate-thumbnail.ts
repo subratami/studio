@@ -46,9 +46,8 @@ const generateThumbnailFlow = ai.defineFlow(
     let imageDataUri: string;
 
     if (input.photoDataUri) {
-      // For image-to-image, return the original image to avoid quota errors.
-      // This simulates the generation process.
-      imageDataUri = input.photoDataUri;
+      // For image-to-image, return a new placeholder to simulate a change.
+      imageDataUri = `https://picsum.photos/1280/720?random=${Math.random()}`;
     } else {
       // For text-to-image, return a placeholder to avoid quota errors.
       imageDataUri = 'https://picsum.photos/1280/720';
