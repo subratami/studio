@@ -21,6 +21,7 @@ import type { Prompt } from '@/lib/types';
 import { enhanceThumbnailPrompt } from '@/ai/flows/enhance-thumbnail-prompt';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { useState, useEffect } from 'react';
+import { Label } from './ui/label';
 
 const formSchema = z.object({
   prompt: z.string().min(5, 'Please enter a more detailed prompt.').max(500),
