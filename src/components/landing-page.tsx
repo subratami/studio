@@ -6,7 +6,39 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowRight, ImageIcon, Sparkles, Wand2 } from 'lucide-react';
 import Image from 'next/image';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, CSSProperties } from 'react';
+
+interface ThumbnailProps {
+  seed: number;
+  alt: string;
+  hint: string;
+  text: string;
+  className: string;
+  style: CSSProperties;
+}
+
+function Thumbnail({ seed, alt, hint, text, className, style }: ThumbnailProps) {
+  return (
+    <div style={style} className="transition-transform duration-500 ease-out">
+      <div className={`relative ${className}`}>
+        <Image
+          src={`https://picsum.photos/seed/${seed}/200/112`}
+          alt={alt}
+          width={200}
+          height={112}
+          className="rounded-xl shadow-2xl"
+          data-ai-hint={hint}
+        />
+        <div 
+          className="absolute inset-0 flex items-center justify-center font-extrabold text-white text-xl pointer-events-none"
+          style={{ textShadow: 'rgb(156, 39, 176) 2px 2px 0px, rgb(255, 193, 7) 4px 4px 0px, rgb(0, 188, 212) 6px 6px 0px, rgb(233, 30, 99) 8px 8px 0px' }}
+        >
+          {text}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function LandingPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -48,30 +80,14 @@ export function LandingPage() {
       <section ref={heroRef} className="relative py-20 sm:py-32 overflow-hidden bg-muted/20">
         {/* Floating Background Images */}
         <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10">
-          <div style={calculateTransform(0.02)} className="transition-transform duration-500 ease-out">
-            <Image src="https://picsum.photos/seed/1/200/112" alt="sample 1" width={200} height={112} className="absolute top-[15%] left-[10%] rounded-xl shadow-2xl" data-ai-hint="gaming thumbnail" />
-          </div>
-          <div style={calculateTransform(-0.03)} className="transition-transform duration-500 ease-out">
-            <Image src="https://picsum.photos/seed/2/200/112" alt="sample 2" width={200} height={112} className="absolute bottom-[20%] right-[15%] rounded-xl shadow-2xl" data-ai-hint="lifestyle vlog" />
-          </div>
-          <div style={calculateTransform(0.015)} className="transition-transform duration-500 ease-out">
-            <Image src="https://picsum.photos/seed/3/200/112" alt="sample 3" width={200} height={112} className="absolute top-[25%] right-[30%] rounded-xl shadow-2xl" data-ai-hint="tech review" />
-          </div>
-          <div style={calculateTransform(-0.025)} className="transition-transform duration-500 ease-out">
-            <Image src="https://picsum.photos/seed/4/200/112" alt="sample 4" width={200} height={112} className="absolute bottom-[10%] left-[25%] rounded-xl shadow-2xl" data-ai-hint="cooking tutorial" />
-          </div>
-           <div style={calculateTransform(0.035)} className="transition-transform duration-500 ease-out">
-            <Image src="https://picsum.photos/seed/5/200/112" alt="sample 5" width={200} height={112} className="absolute top-[60%] left-[5%] rounded-xl shadow-2xl" data-ai-hint="finance advice" />
-          </div>
-          <div style={calculateTransform(-0.01)} className="transition-transform duration-500 ease-out">
-            <Image src="https://picsum.photos/seed/6/200/112" alt="sample 6" width={200} height={112} className="absolute top-[5%] right-[5%] rounded-xl shadow-2xl" data-ai-hint="travel guide" />
-          </div>
-          <div style={calculateTransform(0.022)} className="transition-transform duration-500 ease-out">
-            <Image src="https://picsum.photos/seed/7/200/112" alt="sample 7" width={200} height={112} className="absolute bottom-[40%] right-[45%] rounded-xl shadow-2xl" data-ai-hint="fitness workout" />
-          </div>
-           <div style={calculateTransform(-0.018)} className="transition-transform duration-500 ease-out">
-            <Image src="https://picsum.photos/seed/8/200/112" alt="sample 8" width={200} height={112} className="absolute top-[70%] right-[20%] rounded-xl shadow-2xl" data-ai-hint="unboxing video" />
-          </div>
+          <Thumbnail seed={1} alt="sample 1" hint="gaming thumbnail" text="GAMING" className="absolute top-[15%] left-[10%]" style={calculateTransform(0.02)} />
+          <Thumbnail seed={2} alt="sample 2" hint="lifestyle vlog" text="VLOG" className="absolute bottom-[20%] right-[15%]" style={calculateTransform(-0.03)} />
+          <Thumbnail seed={3} alt="sample 3" hint="tech review" text="TECH" className="absolute top-[25%] right-[30%]" style={calculateTransform(0.015)} />
+          <Thumbnail seed={4} alt="sample 4" hint="cooking tutorial" text="COOKING" className="absolute bottom-[10%] left-[25%]" style={calculateTransform(-0.025)} />
+          <Thumbnail seed={5} alt="sample 5" hint="finance advice" text="FINANCE" className="absolute top-[60%] left-[5%]" style={calculateTransform(0.035)} />
+          <Thumbnail seed={6} alt="sample 6" hint="travel guide" text="TRAVEL" className="absolute top-[5%] right-[5%]" style={calculateTransform(-0.01)} />
+          <Thumbnail seed={7} alt="sample 7" hint="fitness workout" text="FITNESS" className="absolute bottom-[40%] right-[45%]" style={calculateTransform(0.022)} />
+          <Thumbnail seed={8} alt="sample 8" hint="unboxing video" text="UNBOXING" className="absolute top-[70%] right-[20%]" style={calculateTransform(-0.018)} />
         </div>
 
         <div className="container relative mx-auto px-4 text-center">
