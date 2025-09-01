@@ -9,10 +9,69 @@ import Image from 'next/image';
 import { useState, useEffect, useRef } from 'react';
 
 export function LandingPage() {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const heroRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (event: MouseEvent) => {
+      if (heroRef.current) {
+        const rect = heroRef.current.getBoundingClientRect();
+        const x = event.clientX - rect.left - rect.width / 2;
+        const y = event.clientY - rect.top - rect.height / 2;
+        setMousePosition({ x, y });
+      }
+    };
+
+    const currentHeroRef = heroRef.current;
+    currentHeroRef?.addEventListener('mousemove', handleMouseMove);
+
+    return () => {
+      currentHeroRef?.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  const calculateTransform = (factor: number) => {
+    if (typeof window === 'undefined') {
+      return {}; // Return empty on server
+    }
+    const { x, y } = mousePosition;
+    return {
+      transform: `translate(${x * factor}px, ${y * factor}px)`,
+    };
+  };
+
   return (
     <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="relative py-20 sm:py-32 overflow-hidden bg-muted/20">
+      <section ref={heroRef} className="relative py-20 sm:py-32 overflow-hidden bg-muted/20">
+        {/* Floating Background Images */}
+        <div className="absolute inset-0 z-0 opacity-20 dark:opacity-10">
+          <div style={calculateTransform(0.02)} className="transition-transform duration-500 ease-out">
+            <Image src="https://picsum.photos/seed/1/200/112" alt="sample 1" width={200} height={112} className="absolute top-[15%] left-[10%] rounded-xl shadow-2xl" data-ai-hint="gaming thumbnail" />
+          </div>
+          <div style={calculateTransform(-0.03)} className="transition-transform duration-500 ease-out">
+            <Image src="https://picsum.photos/seed/2/200/112" alt="sample 2" width={200} height={112} className="absolute bottom-[20%] right-[15%] rounded-xl shadow-2xl" data-ai-hint="lifestyle vlog" />
+          </div>
+          <div style={calculateTransform(0.015)} className="transition-transform duration-500 ease-out">
+            <Image src="https://picsum.photos/seed/3/200/112" alt="sample 3" width={200} height={112} className="absolute top-[25%] right-[30%] rounded-xl shadow-2xl" data-ai-hint="tech review" />
+          </div>
+          <div style={calculateTransform(-0.025)} className="transition-transform duration-500 ease-out">
+            <Image src="https://picsum.photos/seed/4/200/112" alt="sample 4" width={200} height={112} className="absolute bottom-[10%] left-[25%] rounded-xl shadow-2xl" data-ai-hint="cooking tutorial" />
+          </div>
+           <div style={calculateTransform(0.035)} className="transition-transform duration-500 ease-out">
+            <Image src="https://picsum.photos/seed/5/200/112" alt="sample 5" width={200} height={112} className="absolute top-[60%] left-[5%] rounded-xl shadow-2xl" data-ai-hint="finance advice" />
+          </div>
+          <div style={calculateTransform(-0.01)} className="transition-transform duration-500 ease-out">
+            <Image src="https://picsum.photos/seed/6/200/112" alt="sample 6" width={200} height={112} className="absolute top-[5%] right-[5%] rounded-xl shadow-2xl" data-ai-hint="travel guide" />
+          </div>
+          <div style={calculateTransform(0.022)} className="transition-transform duration-500 ease-out">
+            <Image src="https://picsum.photos/seed/7/200/112" alt="sample 7" width={200} height={112} className="absolute bottom-[40%] right-[45%] rounded-xl shadow-2xl" data-ai-hint="fitness workout" />
+          </div>
+           <div style={calculateTransform(-0.018)} className="transition-transform duration-500 ease-out">
+            <Image src="https://picsum.photos/seed/8/200/112" alt="sample 8" width={200} height={112} className="absolute top-[70%] right-[20%] rounded-xl shadow-2xl" data-ai-hint="unboxing video" />
+          </div>
+        </div>
+
         <div className="container relative mx-auto px-4 text-center">
           <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl font-headline">
             Create Stunning Thumbnails in Seconds
