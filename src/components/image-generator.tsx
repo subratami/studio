@@ -29,9 +29,10 @@ interface ImageGeneratorProps {
   setIsLoading: (loading: { [key:string]: boolean }) => void;
   addPrompt: (newPromptData: Omit<Prompt, 'id' | 'timestamp'>) => void;
   setUploadedImage: (image: string | null) => void;
+  uploadedImage: string | null;
 }
 
-export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploadedImage }: ImageGeneratorProps) {
+export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploadedImage, uploadedImage }: ImageGeneratorProps) {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -51,6 +52,7 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
 
       const result = await generateThumbnail({
         prompt: enhancedPrompt,
+        photoDataUri: uploadedImage || undefined,
       });
 
       setUploadedImage(result.imageDataUri);
@@ -74,14 +76,22 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
     }
   }
 
+  const title = uploadedImage ? 'Image-to-Image Generator' : 'Image Generator';
+  const description = uploadedImage
+    ? 'Use the uploaded image as a base and describe the changes you want to make.'
+    : 'Create a new thumbnail from a text prompt. The prompt will be automatically enhanced.';
+  const placeholder = uploadedImage
+    ? "e.g., 'Make the background a vibrant galaxy'"
+    : "e.g., 'A vibrant abstract background with geometric shapes'";
+
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center">
-          <ImageIcon className="mr-2 text-primary" /> Image Generator
+          <ImageIcon className="mr-2 text-primary" /> {title}
         </CardTitle>
         <CardDescription>
-          Create a new thumbnail from a text prompt. The prompt will be automatically enhanced for best results.
+          {description}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -94,7 +104,7 @@ export function ImageGenerator({ isLoading, setIsLoading, addPrompt, setUploaded
                 <FormItem>
                   <FormLabel>Your Prompt</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="e.g., 'A vibrant abstract background with geometric shapes'" {...field} />
+                    <Textarea placeholder={placeholder} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
