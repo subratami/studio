@@ -10,9 +10,11 @@ import { useState, useEffect, useRef } from 'react';
 
 export function LandingPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMounted, setIsMounted] = useState(false);
   const heroRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
+    setIsMounted(true);
     const handleMouseMove = (event: MouseEvent) => {
       if (heroRef.current) {
         const rect = heroRef.current.getBoundingClientRect();
@@ -31,8 +33,8 @@ export function LandingPage() {
   }, []);
 
   const calculateTransform = (factor: number) => {
-    if (typeof window === 'undefined') {
-      return {}; // Return empty on server
+    if (!isMounted) {
+      return {}; // Return empty on server and on initial client render
     }
     const { x, y } = mousePosition;
     return {
