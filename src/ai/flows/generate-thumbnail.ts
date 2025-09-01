@@ -43,15 +43,31 @@ const generateThumbnailFlow = ai.defineFlow(
     outputSchema: GenerateThumbnailOutputSchema,
   },
   async input => {
+    let media;
     if (input.photoDataUri) {
-      // Image-to-image generation (using a placeholder)
-      console.log('Performing image-to-image generation with prompt:', input.prompt);
-      const imageDataUri = 'https://picsum.photos/1280/721'; // Different size to show it changed
-      return { imageDataUri };
+      // Image-to-image generation
+      const result = await ai.generate({
+        model: googleAI.model('gemini-1.5-flash-latest'),
+        prompt: [
+          {text: input.prompt},
+          {media: {url: input.photoDataUri}},
+        ],
+      });
+      media = result.media;
     } else {
       // Text-to-image generation
-      const imageDataUri = 'https://picsum.photos/1280/720';
-      return { imageDataUri };
+       const result = await ai.generate({
+        model: googleAI.model('imagen-4.0-fast-generate-001'),
+        prompt: input.prompt
+       });
+       media = result.media;
     }
+
+    const imageDataUri = media.url;
+    if (!imageDataUri) {
+        throw new Error('Image generation failed to return a data URI.');
+    }
+    
+    return { imageDataUri };
   }
 );
