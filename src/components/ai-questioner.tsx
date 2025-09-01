@@ -21,7 +21,7 @@ import type { Prompt } from '@/lib/types';
 import { useState } from 'react';
 
 const formSchema = z.object({
-  question: z.string().min(10, 'Please ask a more detailed question.').max(200),
+  question: z.string().min(10, 'Please ask a more detailed question.').max(1000),
 });
 
 interface AiQuestionerProps {

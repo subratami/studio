@@ -22,7 +22,7 @@ import { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
-  prompt: z.string().min(5, 'Please enter a more detailed prompt.').max(500),
+  prompt: z.string().min(5, 'Please enter a more detailed prompt.').max(1000),
 });
 
 interface PromptEnhancerProps {
