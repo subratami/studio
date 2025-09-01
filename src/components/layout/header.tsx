@@ -1,4 +1,4 @@
-import { BrainCircuit, ArrowRight } from 'lucide-react';
+import { BrainCircuit, ArrowRight, User, UserPlus } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
@@ -18,7 +18,13 @@ export function Header() {
           <ThemeToggle />
           <Dialog>
             <DialogTrigger asChild>
-              <Button variant="ghost">Login</Button>
+              <Button variant="ghost" size="sm" className="hidden sm:inline-flex">Login</Button>
+            </DialogTrigger>
+            <DialogTrigger asChild>
+               <Button variant="ghost" size="icon" className="sm:hidden">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Login</span>
+               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -30,9 +36,15 @@ export function Header() {
           </Dialog>
           <Dialog>
             <DialogTrigger asChild>
-              <Button>
+              <Button size="sm" className="hidden sm:inline-flex">
                 Sign Up <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
+            </DialogTrigger>
+             <DialogTrigger asChild>
+               <Button size="icon" className="sm:hidden">
+                  <UserPlus className="h-5 w-5" />
+                   <span className="sr-only">Sign Up</span>
+               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                <DialogHeader>

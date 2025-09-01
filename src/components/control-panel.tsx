@@ -26,7 +26,7 @@ export function ControlPanel(props: ControlPanelProps) {
     <div className="flex h-full flex-col gap-6">
       <ImageUploader setUploadedImage={props.setUploadedImage} uploadedImage={props.uploadedImage} />
       <Tabs defaultValue="assistant" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4">
           <TabsTrigger value="assistant">
             <Sparkles className="mr-2" />
             Assistant

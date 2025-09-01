@@ -30,7 +30,7 @@ function Thumbnail({ seed, alt, hint, text, className, style }: ThumbnailProps) 
           data-ai-hint={hint}
         />
         <div 
-          className="absolute inset-0 flex items-center justify-center font-extrabold text-white text-xl pointer-events-none"
+          className="absolute inset-0 flex items-center justify-center font-extrabold text-white text-lg sm:text-xl pointer-events-none"
           style={{ textShadow: 'rgb(156, 39, 176) 2px 2px 0px, rgb(255, 193, 7) 4px 4px 0px, rgb(0, 188, 212) 6px 6px 0px, rgb(233, 30, 99) 8px 8px 0px' }}
         >
           {text}
@@ -91,7 +91,7 @@ export function LandingPage() {
         </div>
 
         <div className="container relative mx-auto px-4 text-center">
-          <h1 className="text-4xl font-extrabold tracking-tight lg:text-6xl font-headline">
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight lg:text-6xl font-headline">
             Create Stunning Thumbnails in Seconds
           </h1>
           <p className="mt-6 max-w-2xl mx-auto text-lg text-muted-foreground">
@@ -180,7 +180,7 @@ export function LandingPage() {
                 />
                  <div className="absolute inset-0 flex items-center justify-center bg-black/20 p-4">
                     <h2 
-                        className="text-center font-bold text-white text-4xl"
+                        className="text-center font-bold text-white text-3xl sm:text-4xl"
                         style={{textShadow: '2px 2px 8px rgba(0,0,0,0.8)'}}
                     >
                         AI-GENERATED EPIC WIN
